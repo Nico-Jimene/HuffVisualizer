@@ -10,6 +10,6 @@ Node *enqueue(Node **head, void *val);
 Node *dequeue(Node **head);
 Node *stackPush(Node **head, void *val);
 Node *stackPop(Node **head);
-Node *destroyList();
+void destroyList(Node **head);
 
 #endif
