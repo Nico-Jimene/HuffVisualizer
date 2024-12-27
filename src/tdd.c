@@ -1,8 +1,18 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../include/frequencies.h"
 #include "../include/priority_queue.h"
 #include "../include/tdd.h"
+
+static int compareFN(void const *val1, void const *val2) {
+  return (*(int const *)val1 - *(int const *)val2);
+}
+
+static int compareFNSTR(void const *val1, void const *val2) {
+  return strcmp(val1, val2);
+}
 
 static int stackPushTest() {
   test_start();
@@ -57,11 +67,11 @@ static int linkedListPQ_ENQ() {
   int val4 = 15;
   int val5 = 8;
 
-  enqueue(&head, &val1);
-  enqueue(&head, &val2);
-  enqueue(&head, &val3);
-  enqueue(&head, &val4);
-  enqueue(&head, &val5);
+  enqueue(&head, &val1, compareFN);
+  enqueue(&head, &val2, compareFN);
+  enqueue(&head, &val3, compareFN);
+  enqueue(&head, &val4, compareFN);
+  enqueue(&head, &val5, compareFN);
 
   test_check(*(int *)(head)->value == 1);
   test_check(*(int *)(head)->next->value == 5);
@@ -74,29 +84,69 @@ static int linkedListPQ_ENQ() {
   test_end();
 }
 
-static int linkedListPQ_DEQ() {
+static int linkedListPQ_DEQSTR() {
   test_start();
 
   Node *head = NULL;
 
-  int val1 = 1;
-  int val2 = 5;
-  int val3 = 10;
-  int val4 = 15;
-  int val5 = 8;
+  char *str1 = "New";
+  char *str2 = "York";
+  char *str3 = "Knicks";
 
-  enqueue(&head, &val1);
-  enqueue(&head, &val2);
-  enqueue(&head, &val3);
-  enqueue(&head, &val4);
-  enqueue(&head, &val5);
+  enqueue(&head, str1, compareFNSTR);
+  enqueue(&head, str2, compareFNSTR);
+  enqueue(&head, str3, compareFNSTR);
 
-  Node *popNode = dequeue(&head);
+  test_string_equal(head->value, "Knicks");
+  test_string_equal(head->next->value, "New");
+  test_string_equal(head->next->next->value, "York");
 
-  test_check(*(int *)(head)->value == 5);
+  Node *popHead = dequeue(&head);
 
-  destroyList(&popNode);
+  test_string_equal(popHead->value, "Knicks");
+
   destroyList(&head);
+  destroyList(&popHead);
+
+  test_end();
+}
+
+static int testFrequenciesEMPTY() {
+  test_start();
+
+  Freqs f = {0};
+  const char *path = "../text.txt"; // Wrong Path
+  test_check(totalFrequncies(f, path) == false);
+
+  test_end();
+}
+
+static int testFrequencies() {
+  test_start();
+
+  Freqs f = {0};
+  const char *path = "text.txt";
+
+  test_check(totalFrequncies(f, path) == true);
+
+  // Print Frequencies
+  /*for (int i = 0; i < 256; i++) {*/
+  /*  if (f[i] != 0 && (i >= 32 && i <= 120)) {*/
+  /*    printf("%c : %d\n", (char)i, (int)f[i]);*/
+  /*  }*/
+  /*}*/
+
+  test_check(f['!'] == 1);
+  test_check(f['='] == 1);
+  test_check(f['D'] == 1);
+  test_check(f['G'] == 1);
+  test_check(f['T'] == 1);
+  test_check(f['a'] == 2);
+  test_check(f['c'] == 1);
+  test_check(f['n'] == 2);
+  test_check(f['o'] == 1);
+  test_check(f['t'] == 1);
+  test_check(f['u'] == 1);
 
   test_end();
 }
@@ -105,7 +155,8 @@ int main() {
   test_run(stackPushTest);
   test_run(stackPopTest);
   test_run(linkedListPQ_ENQ);
-  test_run(linkedListPQ_DEQ);
-
+  test_run(linkedListPQ_DEQSTR);
+  test_run(testFrequenciesEMPTY);
+  test_run(testFrequencies);
   return EXIT_SUCCESS;
 }

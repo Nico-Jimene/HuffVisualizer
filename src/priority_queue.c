@@ -2,16 +2,10 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-int compareFN(void *val1, void *val2) {
-
-  int value1 = *(int *)val1;
-  int value2 = *(int *)val2;
-
-  return (value1 - value2);
-}
-
-Node *enqueue(Node **head, void *value) {
+Node *enqueue(Node **head, void *value,
+              int (*compareFN)(void const *, void const *)) {
   Node *tempNode = malloc(sizeof(*tempNode));
   tempNode->value = value;
   tempNode->next = NULL;

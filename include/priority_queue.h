@@ -6,7 +6,8 @@ typedef struct _Node {
   struct _Node *next;
 } Node;
 
-Node *enqueue(Node **head, void *val);
+Node *enqueue(Node **head, void *val,
+              int (*compareFN)(void const *, void const *));
 Node *dequeue(Node **head);
 Node *stackPush(Node **head, void *val);
 Node *stackPop(Node **head);
