@@ -12,5 +12,6 @@ Node *dequeue(Node **head);
 Node *stackPush(Node **head, void *val);
 Node *stackPop(Node **head);
 void destroyList(Node **head);
+void destroyListHUFFMAN(Node **head);
 
 #endif

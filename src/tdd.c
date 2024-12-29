@@ -1,8 +1,10 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../include/frequencies.h"
+#include "../include/huffman.h"
 #include "../include/priority_queue.h"
 #include "../include/tdd.h"
 
@@ -151,6 +153,45 @@ static int testFrequencies() {
   test_end();
 }
 
+static int testHuffmanPQ() {
+  test_start();
+
+  Freqs f = {0};
+  const char *path = "test.txt";
+  test_check(totalFrequncies(f, path));
+
+  Node *test = huffmanLinkedList(f);
+
+  /*Node *head = test;*/
+  /**/
+  /*while (head != NULL) {*/
+  /*  printf("%zu %c\n", ((TreeNode *)(head->value))->frequency,*/
+  /*         ((TreeNode *)(head->value))->ch);*/
+  /**/
+  /*  head = head->next;*/
+  /*}*/
+  /**/
+  /*printf("%zu %c\n", ((TreeNode *)(test->next->next->value))->frequency,*/
+  /*       ((TreeNode *)(test->next->next->value))->ch);*/
+  /**/
+  test_check(((TreeNode *)(test->next->value))->frequency == 1);
+  test_check(((TreeNode *)(test->next->value))->ch == 'e');
+
+  test_check(((TreeNode *)(test->next->next->value))->frequency == 1);
+  test_check(((TreeNode *)(test->next->next->value))->ch == 'l');
+
+  test_check(((TreeNode *)(test->next->next->next->value))->frequency == 2);
+  test_check(((TreeNode *)(test->next->next->next->value))->ch == 'a');
+
+  test_check(((TreeNode *)(test->next->next->next->next->value))->frequency ==
+             2);
+  test_check(((TreeNode *)(test->next->next->next->next->value))->ch == 'p');
+
+  destroyListHUFFMAN(&test);
+  /*destroyListHUFFMAN(&head);*/
+  test_end();
+}
+
 int main() {
   test_run(stackPushTest);
   test_run(stackPopTest);
@@ -158,5 +199,6 @@ int main() {
   test_run(linkedListPQ_DEQSTR);
   test_run(testFrequenciesEMPTY);
   test_run(testFrequencies);
+  test_run(testHuffmanPQ);
   return EXIT_SUCCESS;
 }

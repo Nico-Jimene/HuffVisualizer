@@ -66,3 +66,16 @@ void destroyList(Node **head) {
   }
   *head = NULL;
 }
+
+void destroyListHUFFMAN(Node **head) {
+  Node *loopNode = *head;
+
+  while (loopNode != NULL) {
+    Node *temp = loopNode->next;
+
+    free(loopNode->value);
+    free(loopNode);
+    loopNode = temp;
+  }
+  *head = NULL;
+}
