@@ -54,3 +54,14 @@ TreeNode *buildHuffmanTree(Node *head) {
     return rootNode;
   }
 }
+
+void destroyHuffTree(TreeNode **root) {
+  if (*root != NULL) {
+
+    destroyHuffTree(&(*root)->left);
+    destroyHuffTree(&(*root)->left);
+    free(*root);
+  }
+
+  *root = NULL;
+}

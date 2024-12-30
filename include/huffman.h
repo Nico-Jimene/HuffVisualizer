@@ -12,5 +12,6 @@ typedef struct _TreeNode {
 } TreeNode;
 
 Node *huffmanLinkedList(Freqs f);
-
+TreeNode *buildHuffmanTree(Node *head);
+void destroyHuffTree(TreeNode **root);
 #endif

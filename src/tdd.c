@@ -137,7 +137,7 @@ static int testFrequencies() {
   /*    printf("%c : %d\n", (char)i, (int)f[i]);*/
   /*  }*/
   /*}*/
-
+  /**/
   test_check(f['!'] == 1);
   test_check(f['='] == 1);
   test_check(f['D'] == 1);
@@ -174,21 +174,78 @@ static int testHuffmanPQ() {
   /*printf("%zu %c\n", ((TreeNode *)(test->next->next->value))->frequency,*/
   /*       ((TreeNode *)(test->next->next->value))->ch);*/
   /**/
-  test_check(((TreeNode *)(test->next->value))->frequency == 1);
-  test_check(((TreeNode *)(test->next->value))->ch == 'e');
 
-  test_check(((TreeNode *)(test->next->next->value))->frequency == 1);
-  test_check(((TreeNode *)(test->next->next->value))->ch == 'l');
+  test_check(((TreeNode *)(test->value))->frequency == 1);
+  test_check(((TreeNode *)(test->value))->ch == 'e');
+
+  test_check(((TreeNode *)(test->next->value))->frequency == 1);
+  test_check(((TreeNode *)(test->next->value))->ch == 'l');
+
+  test_check(((TreeNode *)(test->next->next->value))->frequency == 2);
+  test_check(((TreeNode *)(test->next->next->value))->ch == 'a');
 
   test_check(((TreeNode *)(test->next->next->next->value))->frequency == 2);
-  test_check(((TreeNode *)(test->next->next->next->value))->ch == 'a');
-
-  test_check(((TreeNode *)(test->next->next->next->next->value))->frequency ==
-             2);
-  test_check(((TreeNode *)(test->next->next->next->next->value))->ch == 'p');
+  test_check(((TreeNode *)(test->next->next->next->value))->ch == 'p');
 
   destroyListHUFFMAN(&test);
   /*destroyListHUFFMAN(&head);*/
+  test_end();
+}
+
+static int testEmptyTree() {
+  test_start();
+
+  Freqs f = {0};
+  const char *path = "empty.txt";
+  test_check(totalFrequncies(f, path));
+
+  Node *head = huffmanLinkedList(f);
+
+  int k = 0;
+
+  while (k != 256) {
+    test_check(f[k] == 0);
+    k += 1;
+  }
+
+  TreeNode *root = buildHuffmanTree(head);
+  test_check(root == NULL);
+
+  destroyHuffTree(&root);
+
+  test_end();
+}
+
+static int testHuffmanTree() {
+  test_start();
+
+  Freqs f = {0};
+  const char *path = "test.txt";
+  test_check(totalFrequncies(f, path));
+
+  Node *head = huffmanLinkedList(f);
+
+  TreeNode *root = buildHuffmanTree(head);
+
+  test_check(root->frequency == 6);
+  test_check(root->left->frequency == 2);
+
+  test_check(root->left->ch == 'p');
+  test_check(root->right->frequency == 4);
+
+  test_check(root->right->left->frequency == 2);
+
+  test_check(root->right->right->frequency == 2);
+  test_check(root->right->right->ch == 'a');
+
+  test_check(root->right->left->left->frequency == 1);
+  test_check(root->right->left->left->ch == 'e');
+
+  test_check(root->right->left->right->frequency == 1);
+  test_check(root->right->left->right->ch == 'l');
+
+  destroyHuffTree(&root);
+
   test_end();
 }
 
@@ -200,5 +257,7 @@ int main() {
   test_run(testFrequenciesEMPTY);
   test_run(testFrequencies);
   test_run(testHuffmanPQ);
+  test_run(testEmptyTree);
+  test_run(testHuffmanTree);
   return EXIT_SUCCESS;
 }
