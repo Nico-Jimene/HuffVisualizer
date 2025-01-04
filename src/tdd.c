@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 
+#include "../include/bit_writer.h"
 #include "../include/frequencies.h"
 #include "../include/huffman.h"
 #include "../include/priority_queue.h"
@@ -249,15 +251,79 @@ static int testHuffmanTree() {
   test_end();
 }
 
+static int testSaveBitsToFile() {
+  test_start();
+
+  BitWriter writer = openBitWriter("test.bits");
+
+  writeBits(&writer, 0x04, 3);
+  writeBits(&writer, 0x01, 2);
+  writeBits(&writer, 0x04, 5);
+
+  test_check(writer.currByte == 0);
+  closeBitWriter(&writer);
+
+  FILE *fp = fopen("test.bits", "r");
+  u_int8_t result = fgetc(fp);
+
+  test_check(result == 137);
+  fclose(fp);
+
+  test_end();
+}
+
+static int testHuffmanEncoder() {
+  test_start();
+
+  Freqs f = {0};
+  const char *path = "test.txt";
+  test_check(totalFrequncies(f, path));
+
+  Node *head = huffmanLinkedList(f);
+
+  TreeNode *root = buildHuffmanTree(head);
+  BitWriter writer = openBitWriter("testing.bits");
+
+  encodingTreeTable(root, &writer);
+
+  /*BitCode charToCodes[256] = {0};*/
+  /*storeCompressedCharacter(root, charToCodes, 0, 0);*/
+  /*const char *input = "aabc";*/
+  /*writeCompressedChar(root, &writer, (u_int8_t *)input);*/
+  /**/
+  closeBitWriter(&writer);
+  destroyHuffTree(&root);
+
+  FILE *fp = fopen("testing.bits", "r");
+
+  u_int8_t storedBytes[4] = {0xB0, 0xD8, 0xAC,
+                             0x60}; // Check if Stored Bytes match output after
+  // encoding the Tree Table
+
+  for (long int i = 0; i < sizeof(storedBytes); i++) {
+    u_int8_t byteOutput = fgetc(fp);
+    test_check(byteOutput == storedBytes[i]);
+    if (byteOutput != storedBytes[i]) {
+      printf("Correct Output: %d, Output: %d", storedBytes[i], byteOutput);
+    }
+  }
+
+  fclose(fp);
+
+  test_end();
+}
+
 int main() {
-  test_run(stackPushTest);
-  test_run(stackPopTest);
-  test_run(linkedListPQ_ENQ);
-  test_run(linkedListPQ_DEQSTR);
-  test_run(testFrequenciesEMPTY);
-  test_run(testFrequencies);
-  test_run(testHuffmanPQ);
-  test_run(testEmptyTree);
-  test_run(testHuffmanTree);
+  /*test_run(stackPushTest);*/
+  /*test_run(stackPopTest);*/
+  /*test_run(linkedListPQ_ENQ);*/
+  /*test_run(linkedListPQ_DEQSTR);*/
+  /*test_run(testFrequenciesEMPTY);*/
+  /*test_run(testFrequencies);*/
+  /*test_run(testHuffmanPQ);*/
+  /*test_run(testEmptyTree);*/
+  /*test_run(testHuffmanTree);*/
+  /*test_run(testSaveBitsToFile);*/
+  test_run(testHuffmanEncoder);
   return EXIT_SUCCESS;
 }

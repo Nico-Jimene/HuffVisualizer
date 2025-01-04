@@ -12,7 +12,7 @@ bool totalFrequncies(Freqs f, const char *path) {
   } else {
 
     for (ch = fgetc(fp); !feof(fp); ch = fgetc(fp)) {
-      if (ch != '\n' && ch != ' ') {
+      if (ch != '\n') {
 
         f[ch] += 1;
       }
